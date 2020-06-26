@@ -10,7 +10,8 @@ from selenium import webdriver
 import time
 import pandas as pd
 
-def get_jobs(keyword, num_jobs, verbose):
+
+def get_jobs(keyword, num_jobs, verbose, slp_time):
     
     '''Gathers jobs as a dataframe, scraped from Glassdoor'''
     
@@ -24,11 +25,8 @@ def get_jobs(keyword, num_jobs, verbose):
     driver = webdriver.Chrome(executable_path="/Users/gagan/Downloads/ds_salary_pjt/chromedriver", options=options)
     driver.set_window_size(1120, 1000)
     
-   
-    
-    url="https://www.glassdoor.com/Job/jobs.htm?sc.generalKeyword=" + keyword+ '"&jobType=all&fromAge=-1&minSalary=0&includeNoSalaryJobs=true&radius=100&cityId=-1&minRating=0.0&industryId=-1&sgocId=-1&seniorityType=all&companyId=-1&employerSizes=0&applicationType=0&remoteWorkType=0'
-    
-   #url = 'https://www.glassdoor.com/Job/jobs.htm?sc.keyword="' + keyword + '"&locT=C&locId=1147401&locKeyword=San%20Francisco,%20CA&jobType=all&fromAge=-1&minSalary=0&includeNoSalaryJobs=true&radius=100&cityId=-1&minRating=0.0&industryId=-1&sgocId=-1&seniorityType=all&companyId=-1&employerSizes=0&applicationType=0&remoteWorkType=0'
+    url = "https://www.glassdoor.com/Job/jobs.htm?suggestCount=0&suggestChosen=false&clickSource=searchBtn&typedKeyword="+keyword+"&sc.keyword="+keyword+"&locT=&locId=&jobType="
+    #url = 'https://www.glassdoor.com/Job/jobs.htm?sc.keyword="' + keyword + '"&locT=C&locId=1147401&locKeyword=San%20Francisco,%20CA&jobType=all&fromAge=-1&minSalary=0&includeNoSalaryJobs=true&radius=100&cityId=-1&minRating=0.0&industryId=-1&sgocId=-1&seniorityType=all&companyId=-1&employerSizes=0&applicationType=0&remoteWorkType=0'
     driver.get(url)
     jobs = []
 
@@ -36,16 +34,16 @@ def get_jobs(keyword, num_jobs, verbose):
 
         #Let the page load. Change this number based on your internet speed.
         #Or, wait until the webpage is loaded, instead of hardcoding it.
+        time.sleep(slp_time)
 
-        time.sleep(15)
-
+        #Test for the "Sign Up" prompt and get rid of it.
         try:
-            driver.find_element_by_class_name("selected").click()  #clicking to the X.
-        except NoSuchElementException:
+            driver.find_element_by_class_name("selected").click()
+        except ElementClickInterceptedException:
             pass
-        
-        time.sleep(5)
-        
+
+        time.sleep(.1)
+
         try:
             driver.find_element_by_css_selector('[alt="Close"]').click() #clicking to the X.
             print(' x out worked')
@@ -62,7 +60,7 @@ def get_jobs(keyword, num_jobs, verbose):
             if len(jobs) >= num_jobs:
                 break
 
-            job_button.click()  #You might 
+            driver.execute_script("arguments[0].click();", job_button)  #You might 
             time.sleep(1)
             collected_successfully = False
             
@@ -182,7 +180,8 @@ def get_jobs(keyword, num_jobs, verbose):
             "Revenue" : revenue,
             "Competitors" : competitors})
             #add job to jobs
-
+            
+            
         #Clicking on the "next page" button
         try:
             driver.find_element_by_xpath('.//li[@class="next"]//a').click()
