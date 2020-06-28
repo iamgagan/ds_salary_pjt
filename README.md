@@ -1,2 +1,4 @@
 # salary_pjt
-Data Science salary prediction by scrapping the data .
+
+## Resources
+https://github.com/arapfaik/scraping-glassdoor-selenium
