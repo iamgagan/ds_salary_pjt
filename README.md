@@ -1,4 +1,4 @@
-# salary_pjt
+# Glassdoor_Data Science_salary_pjt
 
 ## Resources
 https://github.com/arapfaik/scraping-glassdoor-selenium
